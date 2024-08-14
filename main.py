@@ -45,23 +45,23 @@ def add():
     return render_template('add.html')
 
 
-@app.route('/edit/<int:id>', methods=['GET', 'POST'])
-def edit(id):
+@app.route('/edit/<int:id_number>', methods=['GET', 'POST'])
+def edit(id_number):
     with app.app_context():
-        book = db.session.execute(db.select(Book).where(Book.id == id)).scalar()
+        book = db.session.execute(db.select(Book).where(Book.id == id_number)).scalar()
     if request.method == "POST":
         with app.app_context():
-            book_to_update = db.session.execute(db.select(Book).where(Book.id == id)).scalar()
+            book_to_update = db.session.execute(db.select(Book).where(Book.id == id_number)).scalar()
             book_to_update.rating = request.form['rating']
             db.session.commit()
         return redirect(url_for('home'))
-    return render_template('edit.html', book=book, id=id)
+    return render_template('edit.html', book=book, id=id_number)
 
 
-@app.route('/delete/<int:id>')
-def delete(id):
+@app.route('/delete/<int:id_number>')
+def delete(id_number):
     with app.app_context():
-        book_to_delete = db.session.execute(db.select(Book).where(Book.id == id)).scalar()
+        book_to_delete = db.session.execute(db.select(Book).where(Book.id == id_number)).scalar()
         # or book_to_delete = db.get_or_404(Book, book_id)
         db.session.delete(book_to_delete)
         db.session.commit()
