@@ -29,7 +29,7 @@ with app.app_context():
 @app.route('/')
 def home():
     with app.app_context():
-        result = db.session.execute(db.select(Book).order_by(Book.title))
+        result = db.session.execute(db.select(Book).order_by(Book.id))
         all_books = result.scalars().all()
     return render_template('index.html', books=all_books)
 
@@ -43,6 +43,13 @@ def add():
             db.session.commit()
         return redirect(url_for('home'))
     return render_template('add.html')
+
+
+@app.route('/edit/<int:id_number>')
+def edit(id_number):
+    with app.app_context():
+        book = db.session.execute(db.select(Book).where(Book.id == id_number)).scalar()
+    return render_template('edit.html', book=book, id=id_number)
 
 
 if __name__ == "__main__":
