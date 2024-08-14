@@ -45,11 +45,17 @@ def add():
     return render_template('add.html')
 
 
-@app.route('/edit/<int:id_number>')
-def edit(id_number):
+@app.route('/edit/<int:id>', methods=['GET', 'POST'])
+def edit(id):
     with app.app_context():
-        book = db.session.execute(db.select(Book).where(Book.id == id_number)).scalar()
-    return render_template('edit.html', book=book, id=id_number)
+        book = db.session.execute(db.select(Book).where(Book.id == id)).scalar()
+    if request.method == "POST":
+        with app.app_context():
+            book_to_update = db.session.execute(db.select(Book).where(Book.id == id)).scalar()
+            book_to_update.rating = request.form['rating']
+            db.session.commit()
+        return redirect(url_for('home'))
+    return render_template('edit.html', book=book, id=id)
 
 
 if __name__ == "__main__":
